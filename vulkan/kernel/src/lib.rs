@@ -318,13 +318,16 @@ fn test_hash_fn() {
 }
 
 #[allow(unused_attributes)]
-#[spirv(compute(threads(1)))]
+#[spirv(compute(threads(32)))]
 pub fn main_cs(
     #[spirv(global_invocation_id)] gid: UVec3,
     #[spirv(storage_buffer, descriptor_set = 0, binding = 0)] text: &[u32],
     #[spirv(storage_buffer, descriptor_set = 0, binding = 1)] hash: &mut [u32],
     #[spirv(storage_buffer, descriptor_set = 0, binding = 2)] iter: &[u32],
 ) {
+    if gid.x > 16221 {
+        return;
+    }
     // The sha specification loops in blocks of 512
     let num_loops: usize = iter[gid.x as usize] as usize;
 

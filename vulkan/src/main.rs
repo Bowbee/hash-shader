@@ -70,7 +70,9 @@ fn main() {
 
     let compute = device.compile("main_cs", &shader, &args.0).unwrap();
 
-    device.call(compute, (count as u32, 1, 1), &args.1);
+    let invocations = ((count + 32 - 1) / 32) as u32;
+
+    device.call(compute, (invocations, 1, 1), &args.1);
 
     let hash_res = futures::executor::block_on(device.get(&hash_gpu)).unwrap();
     let hash_res = &hash_res[0..hash.len()];
